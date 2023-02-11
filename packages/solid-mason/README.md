@@ -4,6 +4,14 @@
 
 [![NPM](https://img.shields.io/npm/v/stellis.svg)](https://www.npmjs.com/package/stellis) [![JavaScript Style Guide](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript) [![Open in CodeSandbox](https://img.shields.io/badge/Open%20in-CodeSandbox-blue?style=flat-square&logo=codesandbox)](https://codesandbox.io/s/github/LXSMNSYC/solid-popper/tree/main/examples/solid-popper-demo)
 
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/lxsmnsyc/solid-mason/main/images/solid-mason.png"
+    alt="Example"
+    style="width: 80%; height: auto;"
+  />
+</p>
+
 ## Install
 
 ```bash
@@ -56,9 +64,10 @@ const breakpoints = createMasonryBreakpoints(() => [
 </Mason>
 ```
 
-## Masonry order
+## Notes
 
-Masonry's layout order is based on the shortest column when a new element is being calculated width. 
+- Masonry's layout order is based on the shortest column when a new element is being calculated width.
+- Each children must have a pre-calculated height. Width is already provided by the masonry, but height is crucial for resolving columnar layouts.
 
 ## License
 
