@@ -45,7 +45,7 @@ import { Mason } from 'solid-mason';
 ### Breakpoints example
 
 ```js
-import { Mason, createMasonBreakpoints } from 'solid-mason';
+import { Mason, createMasonryBreakpoints } from 'solid-mason';
 
 const breakpoints = createMasonryBreakpoints(() => [
   { query: '(min-width: 1536px)', columns: 6 },
@@ -66,8 +66,8 @@ const breakpoints = createMasonryBreakpoints(() => [
 
 ## Notes
 
-- Masonry's layout order is based on the shortest column when a new element is being calculated width.
-- Each children must have a pre-calculated height. Width is already provided by the masonry, but height is crucial for resolving columnar layouts.
+- Masonry's layout order is based on the shortest column at the time a new element is being inserted.
+- Each children must have a definite height on initial paint. Elements, like images, that changes height dynamically won't be re-adjused automatically by the mansory container.
 
 ## License
 
