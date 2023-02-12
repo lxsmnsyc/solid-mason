@@ -5,6 +5,7 @@ import {
   For,
   JSX,
   mergeProps,
+  on,
   onCleanup,
 } from 'solid-js';
 import { Dynamic, DynamicProps } from 'solid-js/web';
@@ -66,40 +67,41 @@ function getContentWidth(el: HTMLElement | SVGAElement) {
     - parseFloat(styles.paddingRight);
 }
 
-function createMason(el: HTMLElement, columns: number) {
-  // Set style
-  el.style.position = 'relative';
-  el.style.width = '100%';
-  el.style.maxWidth = '100%';
-
+function createMason(
+  el: HTMLElement,
+  columns: number[],
+  computedElements: Set<HTMLElement>,
+) {
   // Get computed style
+  const columnCount = columns.length;
   const containerWidth = getContentWidth(el);
-  const widthPerColumn = containerWidth / columns;
-
-  const columnHeights: number[] = new Array<number>(columns).fill(0);
+  const widthPerColumn = containerWidth / columnCount;
 
   let node = el.firstElementChild;
 
   while (node) {
     if (node instanceof HTMLElement) {
-      // Set the width of the node
-      node.style.width = `${widthPerColumn}px`;
-      // Set the position
-      node.style.position = 'absolute';
-      // Set the top/left
-      const targetColumn = getShortestColumn(columnHeights);
-      const currentColumnHeight = columnHeights[targetColumn];
-      node.style.top = `${currentColumnHeight}px`;
-      node.style.left = `${targetColumn * widthPerColumn}px`;
-      // Increase column height
-      node.getBoundingClientRect();
-      const nodeHeight = node.offsetHeight;
-      columnHeights[targetColumn] = currentColumnHeight + nodeHeight;
+      if (!computedElements.has(node)) {
+        // Set the width of the node
+        node.style.width = `${widthPerColumn}px`;
+        // Set the position
+        node.style.position = 'absolute';
+        // Set the top/left
+        const targetColumn = getShortestColumn(columns);
+        const currentColumnHeight = columns[targetColumn];
+        node.style.top = `${currentColumnHeight}px`;
+        node.style.left = `${targetColumn * widthPerColumn}px`;
+        // Increase column height
+        node.getBoundingClientRect();
+        const nodeHeight = node.offsetHeight;
+        columns[targetColumn] = currentColumnHeight + nodeHeight;
+        computedElements.add(node);
+      }
     }
     node = node.nextElementSibling;
   }
-  const targetColumn = getLongestColumn(columnHeights);
-  const currentColumnHeight = columnHeights[targetColumn];
+  const targetColumn = getLongestColumn(columns);
+  const currentColumnHeight = columns[targetColumn];
   el.style.height = `${currentColumnHeight}px`;
 }
 
@@ -172,14 +174,23 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
   createEffect(() => {
     const el = ref();
     if (el) {
-      // eslint-disable-next-line no-unused-expressions
-      props.items; // for tracking
+      // Set style
+      el.style.position = 'relative';
+      el.style.width = '100%';
+      el.style.maxWidth = '100%';
+
+      const computedElements = new Set<HTMLElement>();
+      const columnHeights: number[] = new Array<number>(props.columns).fill(0);
 
       const recalculate = createRAFDebounce(() => {
-        createMason(el, props.columns);
+        createMason(el, columnHeights, computedElements);
       });
 
       recalculate();
+
+      createMemo(on(() => props.items, () => {
+        recalculate();
+      }));
 
       window.addEventListener('resize', recalculate, { passive: true });
 
