@@ -3,8 +3,8 @@ import {
 } from 'solid-js';
 import { render } from 'solid-js/web';
 import { Mason, createMasonryBreakpoints } from 'solid-mason';
-
 import './style.css';
+
 const HORIZONTAL_ASPECT_RATIO = [
   { width: 4, height: 4 }, // Square
   { width: 4, height: 3 }, // Standard Fullscreen
