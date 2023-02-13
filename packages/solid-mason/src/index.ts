@@ -71,8 +71,7 @@ interface MasonState {
   width: number;
   columns: number[];
   elements: HTMLElement[];
-  records: number[][];
-  top: number[];
+  heights: number[];
 }
 
 function createMason(
@@ -85,8 +84,9 @@ function createMason(
   let isAllDirty = containerWidth !== state.width;
   const widthPerColumn = containerWidth / columnCount;
 
+  const newColumns: number[] = new Array<number>(state.columns.length).fill(0);
   if (isAllDirty) {
-    state.columns = new Array<number>(state.columns.length).fill(0);
+    state.columns = [...newColumns];
   }
 
   let node = el.firstElementChild;
@@ -94,34 +94,25 @@ function createMason(
 
   while (node) {
     if (node instanceof HTMLElement) {
-      const targetColumn = getShortestColumn(state.columns);
+      const targetColumn = getShortestColumn(newColumns);
       if (isAllDirty || state.elements[nodeIndex] !== node) {
         // Set the width of the node
         node.style.width = `${widthPerColumn}px`;
         // Set the position
         node.style.position = 'absolute';
         // Set the top/left
-        let currentColumnHeight = 0;
-        if (isAllDirty) {
-          currentColumnHeight = state.columns[targetColumn];
-        } else if (state.elements[nodeIndex]) {
-          currentColumnHeight = state.top[nodeIndex];
-        } else {
-          currentColumnHeight = state.columns[targetColumn];
-        }
+        const currentColumnHeight = newColumns[targetColumn];
         node.style.top = `${currentColumnHeight}px`;
         node.style.left = `${targetColumn * widthPerColumn}px`;
         // Increase column height
         node.getBoundingClientRect();
         const nodeHeight = node.offsetHeight;
         state.elements[nodeIndex] = node;
-        state.top[nodeIndex] = currentColumnHeight;
-        state.records[nodeIndex] = [...state.columns];
-        if (!isAllDirty) {
-          isAllDirty = true;
-          state.columns = [...state.records[nodeIndex]];
-        }
-        state.columns[targetColumn] = currentColumnHeight + nodeHeight;
+        state.heights[nodeIndex] = nodeHeight;
+        isAllDirty = true;
+        newColumns[targetColumn] = currentColumnHeight + nodeHeight;
+      } else {
+        newColumns[targetColumn] += state.heights[nodeIndex];
       }
       nodeIndex += 1;
     }
@@ -132,6 +123,7 @@ function createMason(
   el.style.height = `${currentColumnHeight}px`;
 
   state.width = containerWidth;
+  state.columns = newColumns;
 }
 
 function createRAFDebounce(callback: () => void): () => void {
@@ -212,8 +204,7 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
         width: 0,
         columns: new Array<number>(props.columns).fill(0),
         elements: [],
-        top: [],
-        records: [],
+        heights: [],
       };
 
       const recalculate = createRAFDebounce(() => {
