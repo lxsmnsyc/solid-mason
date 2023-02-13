@@ -68,8 +68,11 @@ function getContentWidth(el: HTMLElement | SVGAElement) {
 }
 
 interface MasonState {
+  width: number;
   columns: number[];
   elements: HTMLElement[];
+  records: number[][];
+  top: number[];
 }
 
 function createMason(
@@ -79,8 +82,12 @@ function createMason(
   // Get computed style
   const columnCount = state.columns.length;
   const containerWidth = getContentWidth(el);
+  let isAllDirty = containerWidth !== state.width;
   const widthPerColumn = containerWidth / columnCount;
-  const isColumnDirty: boolean[] = [];
+
+  if (isAllDirty) {
+    state.columns = new Array<number>(state.columns.length).fill(0);
+  }
 
   let node = el.firstElementChild;
   let nodeIndex = 0;
@@ -88,21 +95,33 @@ function createMason(
   while (node) {
     if (node instanceof HTMLElement) {
       const targetColumn = getShortestColumn(state.columns);
-      if (isColumnDirty[targetColumn] || state.elements[nodeIndex] !== node) {
+      if (isAllDirty || state.elements[nodeIndex] !== node) {
         // Set the width of the node
         node.style.width = `${widthPerColumn}px`;
         // Set the position
         node.style.position = 'absolute';
         // Set the top/left
-        const currentColumnHeight = state.columns[targetColumn];
+        let currentColumnHeight = 0;
+        if (isAllDirty) {
+          currentColumnHeight = state.columns[targetColumn];
+        } else if (state.elements[nodeIndex]) {
+          currentColumnHeight = state.top[nodeIndex];
+        } else {
+          currentColumnHeight = state.columns[targetColumn];
+        }
         node.style.top = `${currentColumnHeight}px`;
         node.style.left = `${targetColumn * widthPerColumn}px`;
         // Increase column height
         node.getBoundingClientRect();
         const nodeHeight = node.offsetHeight;
-        state.columns[targetColumn] = currentColumnHeight + nodeHeight;
         state.elements[nodeIndex] = node;
-        isColumnDirty[targetColumn] = true;
+        state.top[nodeIndex] = currentColumnHeight;
+        state.records[nodeIndex] = [...state.columns];
+        if (!isAllDirty) {
+          isAllDirty = true;
+          state.columns = [...state.records[nodeIndex]];
+        }
+        state.columns[targetColumn] = currentColumnHeight + nodeHeight;
       }
       nodeIndex += 1;
     }
@@ -111,6 +130,8 @@ function createMason(
   const targetColumn = getLongestColumn(state.columns);
   const currentColumnHeight = state.columns[targetColumn];
   el.style.height = `${currentColumnHeight}px`;
+
+  state.width = containerWidth;
 }
 
 function createRAFDebounce(callback: () => void): () => void {
@@ -188,8 +209,11 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
       el.style.maxWidth = '100%';
 
       const state: MasonState = {
+        width: 0,
         columns: new Array<number>(props.columns).fill(0),
         elements: [],
+        top: [],
+        records: [],
       };
 
       const recalculate = createRAFDebounce(() => {
