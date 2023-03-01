@@ -69,6 +69,10 @@ const breakpoints = createMasonryBreakpoints(() => [
 - Masonry's layout order is based on the shortest column at the time a new element is being inserted.
 - Each children must have a definite height on initial paint. Elements, like images, that changes height dynamically won't be re-adjused automatically by the mansory container.
 
+## Sponsors
+
+![Sponsors](https://github.com/lxsmnsyc/sponsors/blob/main/sponsors.svg?raw=true)
+
 ## License
 
 MIT © [lxsmnsyc](https://github.com/lxsmnsyc)
