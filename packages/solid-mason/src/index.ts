@@ -9,7 +9,7 @@ import {
   onCleanup,
 } from 'solid-js';
 import { Dynamic, DynamicProps } from 'solid-js/web';
-import { omitProps } from 'solid-use';
+import { omitProps } from 'solid-use/props';
 
 type OmitAndMerge<T, U> = T & Omit<U, keyof T>;
 
