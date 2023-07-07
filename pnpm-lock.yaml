@@ -23,7 +23,7 @@ importers:
         specifier: ^1.7.7
         version: 1.7.7
       solid-mason:
-        specifier: 0.1.4
+        specifier: 0.1.5
         version: link:../../packages/solid-mason
       tailwindcss:
         specifier: ^3.3.2
