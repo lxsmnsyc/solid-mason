@@ -118,10 +118,9 @@ function createMason(
     }
     node = node.nextElementSibling;
   }
-  const targetColumn = getLongestColumn(state.columns);
+  const targetColumn = getLongestColumn(newColumns);
   const currentColumnHeight = newColumns[targetColumn];
   el.style.height = `${currentColumnHeight}px`;
-
   state.width = containerWidth;
   state.columns = newColumns;
 }
