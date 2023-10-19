@@ -1,14 +1,15 @@
+import type { JSX } from 'solid-js';
 import {
   createEffect,
   createMemo,
   createSignal,
   For,
-  JSX,
   mergeProps,
   on,
   onCleanup,
 } from 'solid-js';
-import { Dynamic, DynamicProps } from 'solid-js/web';
+import type { DynamicProps } from 'solid-js/web';
+import { Dynamic } from 'solid-js/web';
 import { omitProps } from 'solid-use/props';
 
 type OmitAndMerge<T, U> = T & Omit<U, keyof T>;
@@ -59,7 +60,7 @@ const MASON_STYLE_STRING = ';position:relative;width:100%;max-width:100%;';
 
 const MASON_KEY = 'data-solid-mason';
 
-function getContentWidth(el: HTMLElement | SVGAElement) {
+function getContentWidth(el: HTMLElement | SVGAElement): number {
   const styles = getComputedStyle(el);
 
   return el.clientWidth
@@ -77,7 +78,7 @@ interface MasonState {
 function createMason(
   el: HTMLElement,
   state: MasonState,
-) {
+): void {
   // Get computed style
   const columnCount = state.columns.length;
   const containerWidth = getContentWidth(el);
@@ -137,7 +138,9 @@ function createRAFDebounce(callback: () => void): () => void {
       cancelAnimationFrame(timeout);
     }
 
-    timeout = requestAnimationFrame(() => callback());
+    timeout = requestAnimationFrame(() => {
+      callback();
+    });
   };
 }
 const MEDIA = new Map<string, MediaQueryList>();
@@ -169,7 +172,7 @@ export function createMasonryBreakpoints(
       const item = br[i];
       createMemo(() => {
         const media = getMediaMatcher(item.query);
-        const callback = () => {
+        const callback = (): void => {
           if (media.matches) {
             setColumns(item.columns);
           }
@@ -216,7 +219,9 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
 
       // Track window resize
       window.addEventListener('resize', recalculate, { passive: true });
-      onCleanup(() => window.removeEventListener('resize', recalculate));
+      onCleanup(() => {
+        window.removeEventListener('resize', recalculate);
+      });
 
       // Track child mutations
       const observer = new MutationObserver((mutations) => {
@@ -229,7 +234,9 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
         childList: true,
       });
 
-      onCleanup(() => observer.disconnect());
+      onCleanup(() => {
+        observer.disconnect();
+      });
     }
   });
 
