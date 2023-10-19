@@ -1,6 +1,6 @@
 {
   "name": "demo",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "solid-js": "^1.8.1",
-    "solid-mason": "0.1.5",
+    "solid-mason": "0.1.6",
     "tailwindcss": "^3.3.3"
   },
   "private": true,
