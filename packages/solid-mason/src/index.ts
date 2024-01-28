@@ -1,9 +1,9 @@
 import type { JSX } from 'solid-js';
 import {
+  For,
   createEffect,
   createMemo,
   createSignal,
-  For,
   mergeProps,
   on,
   onCleanup,
@@ -14,13 +14,19 @@ import { omitProps } from 'solid-use/props';
 
 type OmitAndMerge<T, U> = T & Omit<U, keyof T>;
 
-type MasonProps<Data, T extends keyof JSX.HTMLElementTags = 'div'> = OmitAndMerge<{
-  as?: T;
-  columns: number;
-  items?: Data[] | null | undefined;
-  children: (item: Data, index: () => number) => JSX.Element;
-  style?: JSX.CSSProperties | string;
-}, JSX.HTMLElementTags[T]>;
+type MasonProps<
+  Data,
+  T extends keyof JSX.HTMLElementTags = 'div',
+> = OmitAndMerge<
+  {
+    as?: T;
+    columns: number;
+    items?: Data[] | null | undefined;
+    children: (item: Data, index: () => number) => JSX.Element;
+    style?: JSX.CSSProperties | string;
+  },
+  JSX.HTMLElementTags[T]
+>;
 
 function getShortestColumn(columns: number[]): number {
   let min = 0;
@@ -63,9 +69,11 @@ const MASON_KEY = 'data-solid-mason';
 function getContentWidth(el: HTMLElement | SVGAElement): number {
   const styles = getComputedStyle(el);
 
-  return el.clientWidth
-    - parseFloat(styles.paddingLeft)
-    - parseFloat(styles.paddingRight);
+  return (
+    el.clientWidth -
+    Number.parseFloat(styles.paddingLeft) -
+    Number.parseFloat(styles.paddingRight)
+  );
 }
 
 interface MasonState {
@@ -75,10 +83,7 @@ interface MasonState {
   heights: number[];
 }
 
-function createMason(
-  el: HTMLElement,
-  state: MasonState,
-): void {
+function createMason(el: HTMLElement, state: MasonState): void {
   // Get computed style
   const columnCount = state.columns.length;
   const containerWidth = getContentWidth(el);
@@ -213,9 +218,14 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
         createMason(el, state);
       });
 
-      createMemo(on(() => props.items, () => {
-        recalculate();
-      }));
+      createMemo(
+        on(
+          () => props.items,
+          () => {
+            recalculate();
+          },
+        ),
+      );
 
       // Track window resize
       window.addEventListener('resize', recalculate, { passive: true });
@@ -224,7 +234,7 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
       });
 
       // Track child mutations
-      const observer = new MutationObserver((mutations) => {
+      const observer = new MutationObserver(mutations => {
         if (mutations.length) {
           recalculate();
         }
@@ -240,44 +250,46 @@ export function Mason<Data, T extends keyof JSX.HTMLElementTags = 'div'>(
     }
   });
 
-  return Dynamic<T>(mergeProps(
-    {
-      get component() {
-        return props.as ?? 'div';
+  return Dynamic<T>(
+    mergeProps(
+      {
+        get component() {
+          return props.as ?? 'div';
+        },
+        ref: setRef,
+        get children() {
+          return For({
+            get each() {
+              return props.items;
+            },
+            children(item, index) {
+              return Dynamic({
+                component: 'div',
+                get children() {
+                  return props.children(item, index);
+                },
+                style: {
+                  position: 'absolute',
+                },
+              });
+            },
+          });
+        },
+        get [MASON_KEY]() {
+          return props.columns;
+        },
+        get style() {
+          const current = props.style;
+          if (typeof current === 'string') {
+            return `${current}${MASON_STYLE_STRING}`;
+          }
+          if (current) {
+            return { ...current, MASON_STYLE };
+          }
+          return MASON_STYLE_STRING;
+        },
       },
-      ref: setRef,
-      get children() {
-        return For({
-          get each() {
-            return props.items;
-          },
-          children(item, index) {
-            return Dynamic({
-              component: 'div',
-              get children() {
-                return props.children(item, index);
-              },
-              style: {
-                position: 'absolute',
-              },
-            });
-          },
-        });
-      },
-      get [MASON_KEY]() {
-        return props.columns;
-      },
-      get style() {
-        const current = props.style;
-        if (typeof current === 'string') {
-          return `${current}${MASON_STYLE_STRING}`;
-        }
-        if (current) {
-          return { ...current, MASON_STYLE };
-        }
-        return MASON_STYLE_STRING;
-      },
-    },
-    omitProps(props, ['as', 'children', 'columns', 'items', 'style']),
-  ) as unknown as DynamicProps<T>);
+      omitProps(props, ['as', 'children', 'columns', 'items', 'style']),
+    ) as unknown as DynamicProps<T>,
+  );
 }

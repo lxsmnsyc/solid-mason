@@ -1,6 +1,5 @@
-import {
-  createSignal, JSX, onCleanup, onMount,
-} from 'solid-js';
+import type { JSX } from 'solid-js';
+import { createSignal, onCleanup, onMount } from 'solid-js';
 import { render } from 'solid-js/web';
 import { Mason, createMasonryBreakpoints } from 'solid-mason';
 import './style.css';
@@ -30,18 +29,17 @@ const HORIZONTAL_ASPECT_RATIO = [
   { width: 12, height: 3 }, // Polyvision
 ];
 
-const VERTICAL_ASPECT_RATIO = HORIZONTAL_ASPECT_RATIO.map((item) => ({
+const VERTICAL_ASPECT_RATIO = HORIZONTAL_ASPECT_RATIO.map(item => ({
   width: item.height,
   height: item.width,
 }));
 
-const ASPECT_RATIO = [
-  ...HORIZONTAL_ASPECT_RATIO,
-  ...VERTICAL_ASPECT_RATIO,
-].map((item) => ({
-  width: item.width * 50,
-  height: item.height * 50,
-}));
+const ASPECT_RATIO = [...HORIZONTAL_ASPECT_RATIO, ...VERTICAL_ASPECT_RATIO].map(
+  item => ({
+    width: item.width * 50,
+    height: item.height * 50,
+  }),
+);
 
 interface Item {
   id: number;
@@ -50,7 +48,8 @@ interface Item {
 }
 
 function createNewImage(id: number): Item {
-  const randomAspectRatio = ASPECT_RATIO[Math.floor(Math.random() * ASPECT_RATIO.length)];
+  const randomAspectRatio =
+    ASPECT_RATIO[Math.floor(Math.random() * ASPECT_RATIO.length)];
 
   return {
     ...randomAspectRatio,
@@ -62,7 +61,7 @@ function Root(): JSX.Element {
   const [items, setItems] = createSignal<Item[]>([]);
 
   function addItems() {
-    setItems((current) => {
+    setItems(current => {
       const newData = [...current];
 
       for (let i = 0; i < 20; i += 1) {
@@ -74,7 +73,7 @@ function Root(): JSX.Element {
   }
 
   function onScroll() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
       addItems();
     }
   }
@@ -102,9 +101,12 @@ function Root(): JSX.Element {
   return (
     <div class="w-screen p-8 min-h-screen">
       <Mason columns={breakpoints()} items={items()}>
-        {(item) => (
+        {item => (
           <div class="w-full p-2">
-            <div class="parent rounded-xl overflow-hidden" style={{ 'aspect-ratio': `${item.width}/${item.height}` }}>
+            <div
+              class="parent rounded-xl overflow-hidden"
+              style={{ 'aspect-ratio': `${item.width}/${item.height}` }}
+            >
               <div
                 class="child flex items-center justify-center"
                 style={{
