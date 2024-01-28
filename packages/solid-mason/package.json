@@ -1,13 +1,18 @@
 {
   "name": "solid-mason",
   "type": "module",
-  "version": "0.1.6",
-  "files": ["dist", "src"],
+  "version": "0.1.7",
+  "files": [
+    "dist",
+    "src"
+  ],
   "engines": {
     "node": ">=10"
   },
   "license": "MIT",
-  "keywords": ["pridepack"],
+  "keywords": [
+    "pridepack"
+  ],
   "devDependencies": {
     "@types/node": "^20.11.5",
     "pridepack": "2.6.0",
