@@ -2,17 +2,12 @@
   "name": "solid-mason",
   "type": "module",
   "version": "0.1.6",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "engines": {
     "node": ">=10"
   },
   "license": "MIT",
-  "keywords": [
-    "pridepack"
-  ],
+  "keywords": ["pridepack"],
   "devDependencies": {
     "@types/node": "^20.11.5",
     "pridepack": "2.6.0",
@@ -21,7 +16,10 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "solid-js": "^1.8"
+    "solid-js": "^1.6"
+  },
+  "dependencies": {
+    "solid-use": "^0.8.0"
   },
   "scripts": {
     "prepublishOnly": "pridepack clean && pridepack build",
@@ -48,9 +46,6 @@
   },
   "author": "Alexis Munsayac",
   "private": false,
-  "dependencies": {
-    "solid-use": "^0.7.1"
-  },
   "types": "./dist/types/index.d.ts",
   "main": "./dist/cjs/production/index.cjs",
   "module": "./dist/esm/production/index.mjs",
