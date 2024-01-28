@@ -49,8 +49,8 @@ importers:
   packages/solid-mason:
     dependencies:
       solid-use:
-        specifier: ^0.7.1
-        version: 0.7.1(seroval@1.0.4)(solid-js@1.8.12)
+        specifier: ^0.8.0
+        version: 0.8.0(solid-js@1.8.12)
     devDependencies:
       '@types/node':
         specifier: ^20.11.5
@@ -1813,7 +1813,7 @@ packages:
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: false
 
   /chownr@2.0.0:
@@ -2506,20 +2506,11 @@ packages:
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-  /fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /function-bind@1.1.1:
@@ -5036,17 +5027,12 @@ packages:
       solid-js: 1.8.12
     dev: true
 
-  /solid-use@0.7.1(seroval@1.0.4)(solid-js@1.8.12):
-    resolution: {integrity: sha512-tgWcnTSzCw4/eSp4qkEnic5/wEiqeXz/4aexvDECEVhnMDCNJNXJUz2kaBfB85r+GpEAsyncorgN9wiYOdRFJg==}
+  /solid-use@0.8.0(solid-js@1.8.12):
+    resolution: {integrity: sha512-YX+XmcKLvSx3bwMimMhFy40ZkDnShnUcEw6cW6fSscwKEgl1TG3GlgAvkBmQ3AeWjvQSd8+HGTr82ImsrjkkqA==}
     engines: {node: '>=10'}
     peerDependencies:
-      seroval: '>=0.9.0'
       solid-js: ^1.7
-    peerDependenciesMeta:
-      seroval:
-        optional: true
     dependencies:
-      seroval: 1.0.4
       solid-js: 1.8.12
     dev: false
 
