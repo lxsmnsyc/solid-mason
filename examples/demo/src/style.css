@@ -1,21 +1,120 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Dark throughout, including the scrollbars and form controls. */
+:root {
+  color-scheme: dark;
+}
 
 body {
-  @apply overflow-x-hidden;
+  overflow-x: hidden;
+  background: rgb(9 12 22);
+  color: rgb(226 232 240);
 }
 
 .child {
   width: 100%;
   height: 100%;
-  background-color: black; /* fallback color */
-  transition: all .5s;
+  background-color: rgb(30 41 59); /* Shown while the image loads. */
   background-position: center;
   background-size: cover;
+  transition: transform 0.5s;
 }
 
 .parent:hover .child,
-.parent:focus .child {
+.parent:focus-within .child {
   transform: scale(1.2);
+}
+
+/*
+ * Photos run from near-black to near-white, so plain white text disappears on
+ * half of them. The label gets its own dark chip rather than relying on the
+ * image behind it.
+ */
+.image-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: rgb(2 6 23 / 0.72);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+/*
+ * The order overlay sits on top of the grid and is never interactive. Leader
+ * lines start at the right edge of an item and bend into the gutter, where the
+ * child indices line up in one column.
+ */
+.order-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.order-line {
+  fill: none;
+  stroke: rgb(100 116 139);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  transition:
+    stroke 0.15s,
+    stroke-width 0.15s;
+}
+
+.order-dot {
+  fill: rgb(148 163 184);
+  transition: fill 0.15s;
+}
+
+.order-index {
+  fill: rgb(148 163 184);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  transition: fill 0.15s;
+}
+
+/* Only the hit area takes the pointer; the rest of the overlay stays inert. */
+.order-hit {
+  fill: transparent;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.order-marker.is-active .order-line {
+  stroke: rgb(96 165 250);
+  stroke-width: 1.5;
+  stroke-dasharray: none;
+}
+
+.order-marker.is-active .order-dot {
+  fill: rgb(96 165 250);
+}
+
+.order-marker.is-active .order-index {
+  fill: rgb(147 197 253);
+}
+
+/*
+ * While a marker is hovered the rest of the grid fades back, so the one item
+ * that index belongs to is unmistakable.
+ */
+.is-tracing .parent {
+  opacity: 0.3;
+}
+
+.parent.is-active {
+  opacity: 1;
+  outline: 3px solid rgb(96 165 250);
+  outline-offset: 2px;
+}
+
+.parent {
+  transition: opacity 0.15s;
 }
