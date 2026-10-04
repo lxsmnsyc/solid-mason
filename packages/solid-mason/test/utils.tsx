@@ -1,6 +1,7 @@
-import type { JSX } from 'solid-js';
-import { render } from 'solid-js/web';
+import type { JSX } from '@solidjs/web';
+import { render } from '@solidjs/web';
 import { afterEach } from 'vitest';
+import { MASON_KEY } from '../src/index';
 
 const disposers: (() => void)[] = [];
 
@@ -41,7 +42,7 @@ export async function nextFrames(count = 2): Promise<void> {
 
 /** The container `Mason` rendered, found by its marker attribute. */
 export function getContainer(host: HTMLElement): HTMLElement {
-  const el = host.querySelector<HTMLElement>('[data-solid-mason]');
+  const el = host.querySelector<HTMLElement>(`[${MASON_KEY}]`);
   if (!el) {
     throw new Error('Mason container was not rendered');
   }

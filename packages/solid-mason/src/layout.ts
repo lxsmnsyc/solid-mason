@@ -9,7 +9,7 @@
  * can find a masonry container and read its column count without reaching into
  * the component.
  */
-export const MASON_KEY = 'data-solid-mason';
+export const MASON_KEY = 'data-solid-mason' as const;
 
 /**
  * Styles the container needs for absolute positioning of its children to mean
@@ -125,7 +125,7 @@ export function createMasonState(columns: number): MasonState {
  * case for a masonry grid) from re-measuring everything already on screen.
  *
  * This reads and writes layout, so callers should batch it behind an animation
- * frame rather than calling it per mutation. `createRAFDebounce` does that.
+ * frame rather than calling it per mutation.
  *
  * @param el Container element.
  * @param state Mutable state from the previous pass, updated in place.

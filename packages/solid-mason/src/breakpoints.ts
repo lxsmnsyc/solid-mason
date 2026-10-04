@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { createEffect, createSignal } from 'solid-js';
 
 // `matchMedia` allocates a new `MediaQueryList` per call, and each one carries
 // its own listener set. Sharing one per query string keeps a page full of
@@ -60,8 +60,8 @@ export function createMasonryBreakpoints(
 ): () => number {
   const [columns, setColumns] = createSignal(defaultColumns);
 
-  createEffect(() => {
-    for (const item of breakpoints()) {
+  createEffect(breakpoints, (list) => {
+    const listeners = list.map((item) => {
       const media = getMediaMatcher(item.query);
       const callback = (): void => {
         if (media.matches) {
@@ -70,10 +70,14 @@ export function createMasonryBreakpoints(
       };
       callback();
       media.addEventListener('change', callback, false);
-      onCleanup(() => {
+      return { media, callback };
+    });
+
+    return () => {
+      for (const { media, callback } of listeners) {
         media.removeEventListener('change', callback, false);
-      });
-    }
+      }
+    };
   });
 
   return columns;
