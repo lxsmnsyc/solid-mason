@@ -10,11 +10,12 @@
     "build": "pnpm recursive run build",
     "cs:add": "changeset add",
     "cs:pub": "changeset publish",
-    "cs:ver": "changeset version",
+    "cs:ver": "changeset version && pnpm install --lockfile-only",
     "fmt": "oxfmt .",
     "fmt:check": "oxfmt --check .",
     "lint": "oxlint --type-aware",
     "lint:fix": "oxlint --type-aware --fix",
+    "release": "pnpm run build && changeset publish",
     "test": "pnpm recursive run test",
     "type-check": "pnpm recursive run type-check"
   },
@@ -25,5 +26,6 @@
     "oxlint": "^1.82.0",
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2"
-  }
+  },
+  "packageManager": "pnpm@12.7.0"
 }
