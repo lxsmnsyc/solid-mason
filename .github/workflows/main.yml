@@ -24,8 +24,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Playwright is a dependency of the package, not of the workspace root.
       - name: Install browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm --filter solid-mason exec playwright install --with-deps chromium
 
       - name: Build
         run: pnpm run build
