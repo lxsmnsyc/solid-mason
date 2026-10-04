@@ -139,5 +139,8 @@ dist
 test-results/
 playwright-report/
 
+# Vitest browser mode failure screenshots
+.vitest/
+
 # oxlint/oxfmt
 .oxlintcache
