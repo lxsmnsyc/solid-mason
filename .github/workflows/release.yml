@@ -1,12 +1,16 @@
 name: Release
 
-# Every push to `main` either opens or updates a "Version Packages" pull request
-# from the pending changesets. Once that pull request is merged, the next push
-# publishes the versions that are not on npm yet.
+# Every push to a release branch either opens or updates a "Version Packages"
+# pull request from the pending changesets. Once that pull request is merged,
+# the next push publishes the versions that are not on npm yet.
+#
+# `main` is the Solid 1 line and publishes to the `latest` tag. `1.x` is the
+# Solid 2 line and is in changesets pre mode, so it publishes to `next`.
 on:
   push:
     branches:
       - main
+      - 1.x
 
 # Two releases running at once could both try to publish the same version.
 concurrency:
