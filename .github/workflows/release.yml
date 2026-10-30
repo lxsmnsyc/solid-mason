@@ -11,6 +11,9 @@ on:
     branches:
       - main
       - 1.x
+    # Roadmaps, debates, proposals and decisions carry no changesets.
+    paths-ignore:
+      - 'docs/**'
 
 # Two releases running at once could both try to publish the same version.
 concurrency:
