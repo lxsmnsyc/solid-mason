@@ -1,7 +1,7 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { createSignal } from 'solid-js';
 import { describe, expect, it } from 'vitest';
-import { Mason } from '../src/index';
+import { MASON_KEY, Mason } from '../src/index';
 import { getChildren, getContainer, nextFrames, renderInHost } from './utils';
 
 interface Box {
@@ -144,7 +144,7 @@ describe('Mason', () => {
     await nextFrames();
 
     const container = getContainer(host);
-    expect(container.getAttribute('data-solid-mason')).toBe('1');
+    expect(container.getAttribute(MASON_KEY)).toBe('1');
     expect(getChildren(container)[0].style.width).toBe(`${HOST_WIDTH}px`);
     expect(container.style.height).toBe('200px');
   });

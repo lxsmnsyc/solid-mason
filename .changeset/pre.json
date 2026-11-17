@@ -1,0 +1,10 @@
+{
+  "mode": "exit",
+  "tag": "next",
+  "initialVersions": {
+    "solid-mason": "0.2.0"
+  },
+  "changesets": [
+    "solid-two-support"
+  ]
+}

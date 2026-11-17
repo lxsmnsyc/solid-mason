@@ -1,5 +1,5 @@
 import type { Accessor } from 'solid-js';
-import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { createEffect, createSignal } from 'solid-js';
 
 /** Smallest vertical gap between two labels in the gutter, in pixels. */
 const LABEL_GAP = 14;
@@ -70,63 +70,65 @@ export function createOrderMarkers(
 ): Accessor<OrderOverlay> {
   const [overlay, setOverlay] = createSignal<OrderOverlay>(EMPTY);
 
-  createEffect(() => {
-    const host = wrapper();
-    const el = container();
-    if (!host || !el) {
-      return;
-    }
+  createEffect(
+    // The compute phase is the tracked one, so both elements are read here.
+    () => ({ host: wrapper(), el: container() }),
+    ({ host, el }) => {
+      if (!host || !el) {
+        return undefined;
+      }
 
-    let frame: number | undefined;
+      let frame: number | undefined;
 
-    const measure = (): void => {
-      frame = undefined;
+      const measure = (): void => {
+        frame = undefined;
 
-      const markers = Array.from(el.children)
-        .filter((child): child is HTMLElement => child instanceof HTMLElement)
-        .map((child, index) => ({
-          index,
-          x: child.offsetLeft,
-          y: child.offsetTop,
-          labelY: 0,
-        }));
+        const markers = Array.from(el.children)
+          .filter((child): child is HTMLElement => child instanceof HTMLElement)
+          .map((child, index) => ({
+            index,
+            x: child.offsetLeft,
+            y: child.offsetTop,
+            labelY: 0,
+          }));
 
-      declutter(markers);
+        declutter(markers);
 
-      setOverlay({
-        width: host.clientWidth,
-        height: host.clientHeight,
-        markers,
+        setOverlay({
+          width: host.clientWidth,
+          height: host.clientHeight,
+          markers,
+        });
+      };
+
+      const schedule = (): void => {
+        if (frame !== undefined) {
+          cancelAnimationFrame(frame);
+        }
+        frame = requestAnimationFrame(measure);
+      };
+
+      const observer = new MutationObserver(schedule);
+      observer.observe(el, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style'],
       });
-    };
 
-    const schedule = (): void => {
-      if (frame !== undefined) {
-        cancelAnimationFrame(frame);
-      }
-      frame = requestAnimationFrame(measure);
-    };
+      window.addEventListener('resize', schedule, { passive: true });
 
-    const observer = new MutationObserver(schedule);
-    observer.observe(el, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style'],
-    });
+      schedule();
 
-    window.addEventListener('resize', schedule, { passive: true });
-
-    schedule();
-
-    onCleanup(() => {
-      observer.disconnect();
-      window.removeEventListener('resize', schedule);
-      if (frame !== undefined) {
-        cancelAnimationFrame(frame);
-      }
-    });
-  });
+      return () => {
+        observer.disconnect();
+        window.removeEventListener('resize', schedule);
+        if (frame !== undefined) {
+          cancelAnimationFrame(frame);
+        }
+      };
+    },
+  );
 
   return overlay;
 }

@@ -29,11 +29,21 @@ yarn add solid-mason
 ```
 
 ```bash
-pnpm add solid-mason
+pnpm add solid-mason@next
 ```
 
-The package ships both ESM and CommonJS builds, and has `solid-js` as a
-peer dependency.
+## Requirements
+
+This is the Solid 2 line, published under the `next` tag. For Solid 1, use
+`solid-mason@latest` (the 0.2.x releases).
+
+- `solid-js` and `@solidjs/web` 2.0.0-rc or later, as peer dependencies.
+- A build that runs Solid's JSX compiler over the package. The package ships
+  its JSX as written rather than code compiled for one renderer, so your own
+  compiler builds it for your target, client or server alike.
+  `@solidjs/vite-plugin` does this by default. A bundler that does not compile
+  JSX in dependencies cannot import the package, and there is no CommonJS
+  build for the same reason.
 
 ## Usage
 
@@ -93,9 +103,9 @@ const breakpoints = createMasonryBreakpoints(() => [
 | `style`    | `JSX.CSSProperties \| string`                      | —       | Extra container styles, merged with the ones the layout needs.   |
 | `ref`      | `HTMLElement \| ((el: HTMLElement) => void)`       | —       | Receives the container element. Mason keeps its own as well.     |
 
-Layout re-runs when `items` or `columns` change, when the window resizes, and
-when children are added or removed, always batched onto the next animation
-frame.
+Layout re-runs when `columns` changes, when the window resizes, and whenever
+children are added, removed or reordered, always batched onto the next
+animation frame.
 
 ### `createMasonryBreakpoints(breakpoints, defaultColumns?)`
 

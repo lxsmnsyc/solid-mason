@@ -1,6 +1,6 @@
-import type { JSX } from 'solid-js';
-import { For, createSignal, onCleanup, onMount } from 'solid-js';
-import { render } from 'solid-js/web';
+import type { JSX } from '@solidjs/web';
+import { For, render } from '@solidjs/web';
+import { createSignal, onSettled } from 'solid-js';
 import { Mason, createMasonryBreakpoints } from 'solid-mason';
 import { createOrderMarkers } from './order-markers';
 import './style.css';
@@ -82,14 +82,14 @@ function Root(): JSX.Element {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     addItems();
 
     document.addEventListener('scroll', onScroll, { passive: true });
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('scroll', onScroll);
-    });
+    };
   });
 
   const breakpoints = createMasonryBreakpoints(() => [
@@ -114,8 +114,7 @@ function Root(): JSX.Element {
       {/* The padding on the right is the gutter the index labels sit in, kept
           clear of the grid so every label lines up in one column. */}
       <div
-        class="relative pr-14"
-        classList={{ 'is-tracing': active() !== undefined }}
+        class={['relative pr-14', { 'is-tracing': active() !== undefined }]}
         ref={(el) => {
           setWrapper(el);
         }}
@@ -130,8 +129,10 @@ function Root(): JSX.Element {
           {(item, index) => (
             <div class="w-full p-2">
               <div
-                class="parent relative overflow-hidden rounded-xl"
-                classList={{ 'is-active': active() === index() }}
+                class={[
+                  'parent relative overflow-hidden rounded-xl',
+                  { 'is-active': active() === index() },
+                ]}
                 style={{ 'aspect-ratio': `${item.width}/${item.height}` }}
               >
                 <div
@@ -152,7 +153,7 @@ function Root(): JSX.Element {
             {(marker) => {
               const bend = overlay().width - GUTTER;
               return (
-                <g class="order-marker" classList={{ 'is-active': active() === marker.index }}>
+                <g class={['order-marker', { 'is-active': active() === marker.index }]}>
                   <circle class="order-dot" cx={marker.x} cy={marker.y} r="2.5" />
                   <polyline
                     class="order-line"

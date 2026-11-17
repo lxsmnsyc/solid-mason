@@ -1,4 +1,4 @@
-import { createRoot, createSignal } from 'solid-js';
+import { createRoot, createSignal, flush } from 'solid-js';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { MasonryBreakpoint } from '../src/index';
 import { createMasonryBreakpoints } from '../src/index';
@@ -18,6 +18,9 @@ class FakeMediaQueryList extends EventTarget {
   set(matches: boolean): void {
     this.matches = matches;
     this.dispatchEvent(new Event('change'));
+    // Solid 2 batches on a microtask. The listener's write has to land before
+    // the test reads the accessor back.
+    flush();
   }
 }
 
@@ -58,17 +61,20 @@ function uniqueQuery(): string {
 }
 
 /**
- * Solid flushes effects when `createRoot` returns, so the accessor is read
- * outside the root rather than inside the callback that creates it.
+ * Effects are queued rather than run inline, so the root is flushed before the
+ * accessor is read. Reading inside the `createRoot` callback would see the
+ * default instead of the matching breakpoint.
  */
 function mount(
   breakpoints: () => MasonryBreakpoint[],
   defaultColumns?: number,
 ): { columns: () => number; dispose: () => void } {
-  return createRoot((dispose) => ({
+  const mounted = createRoot((dispose) => ({
     columns: createMasonryBreakpoints(breakpoints, defaultColumns),
     dispose,
   }));
+  flush();
+  return mounted;
 }
 
 describe('createMasonryBreakpoints', () => {
@@ -144,6 +150,7 @@ describe('createMasonryBreakpoints', () => {
     expect(columns()).toBe(4);
 
     setBreakpoints([{ query: second, columns: 8 }]);
+    flush();
     list(second).set(true);
     expect(columns()).toBe(8);
 
@@ -160,6 +167,7 @@ describe('createMasonryBreakpoints', () => {
 
     const { columns, dispose } = mount(() => [{ query, columns: 7 }]);
     dispose();
+    flush();
 
     list(query).set(true);
     expect(columns()).toBe(1);

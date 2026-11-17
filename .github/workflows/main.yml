@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 1.x
     # Roadmaps, debates, proposals and decisions are not build inputs.
     paths-ignore:
       - 'docs/**'

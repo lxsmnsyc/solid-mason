@@ -1,6 +1,6 @@
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
-import solid from 'vite-plugin-solid';
+import solid from '@solidjs/vite-plugin';
 
 // The layout pass measures elements: `clientWidth`, computed padding,
 // `offsetHeight`, and a forced reflow between writing a width and reading a
@@ -13,10 +13,6 @@ export default defineConfig({
   },
   test: {
     include: ['test/**/*.test.{ts,tsx}'],
-    // `vite-plugin-solid` forces `jsdom` on any config it sees under Vitest.
-    // Browser mode supplies the DOM here, so the setting is overridden rather
-    // than pulling in a DOM implementation the suite never uses.
-    environment: 'node',
     browser: {
       enabled: true,
       headless: true,
