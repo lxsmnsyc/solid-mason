@@ -29,15 +29,15 @@ yarn add solid-mason
 ```
 
 ```bash
-pnpm add solid-mason@next
+pnpm add solid-mason
 ```
 
 ## Requirements
 
-This is the Solid 2 line, published under the `next` tag. For Solid 1, use
-`solid-mason@latest` (the 0.2.x releases).
+This is the Solid 2 line. For Solid 1.x, use the 0.x versions of this package,
+maintained on the `solid-1` branch.
 
-- `solid-js` and `@solidjs/web` 2.0.0-rc or later, as peer dependencies.
+- `solid-js` and `@solidjs/web` 2.0 or later, as peer dependencies.
 - A build that runs Solid's JSX compiler over the package. The package ships
   its JSX as written rather than code compiled for one renderer, so your own
   compiler builds it for your target, client or server alike.

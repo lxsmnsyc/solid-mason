@@ -4,13 +4,11 @@ name: Release
 # pull request from the pending changesets. Once that pull request is merged,
 # the next push publishes the versions that are not on npm yet.
 #
-# `main` is the Solid 1 line and publishes to the `latest` tag. `1.x` is the
-# Solid 2 line and is in changesets pre mode, so it publishes to `next`.
+# `main` is the Solid 2 line and publishes to the `latest` tag.
 on:
   push:
     branches:
       - main
-      - 1.x
 
 # Two releases running at once could both try to publish the same version.
 concurrency:

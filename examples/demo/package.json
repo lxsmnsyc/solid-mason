@@ -13,12 +13,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@solidjs/web": "^2.0.0-rc.13",
-    "solid-js": "^2.0.0-rc.13",
+    "@solidjs/web": "2.0.0",
+    "solid-js": "2.0.0",
     "solid-mason": "workspace:*"
   },
   "devDependencies": {
-    "@solidjs/vite-plugin": "^3.0.0-next.47",
+    "@solidjs/vite-plugin": "3.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
